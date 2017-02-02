@@ -4,7 +4,7 @@ import {Component, ElementRef, EventEmitter, OnChanges, OnDestroy, OnInit, Simpl
   selector: 'jg-leaflet-map',
   template: ``
 })
-export class LeafletMap implements OnChanges, OnInit, OnDestroy{
+export class JGLeafletMapComponent implements OnChanges, OnInit, OnDestroy{
 
   ngOnChanges() {
 
