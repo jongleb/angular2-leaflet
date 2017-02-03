@@ -1,11 +1,20 @@
-import {Component, ElementRef, EventEmitter, OnChanges, OnDestroy, OnInit, SimpleChange, Input} from '@angular/core';
+///<reference path="../../node_modules/@types/leaflet/index.d.ts"/>
+import {Component,
+  ElementRef,
+  EventEmitter,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChange,
+  Input} from '@angular/core';
 import {LeafletFactoryService} from '../services/leaflet-factory.service';
-import Zoom = L.Zoom;
-import CRS = L.CRS;
-import LatLngExpression = L.LatLngExpression;
-import Layer = L.Layer;
-import LatLngBoundsExpression = L.LatLngBoundsExpression;
-import Renderer = L.Renderer;
+
+import {CRS,
+  Zoom,
+  LatLngExpression,
+  Layer,
+  LatLngBoundsExpression,
+  Renderer} from 'leaflet'
 
 @Component({
   selector: 'jg-leaflet-map',
@@ -17,68 +26,68 @@ import Renderer = L.Renderer;
 export class JGLeafletMapComponent implements OnChanges, OnInit, OnDestroy{
 
   @Input()
-  public preferCanvas?: boolean;
+  public preferCanvas?: boolean = false;
 
   /**
    * Control options
    */
   @Input()
-  public attributionControl?: boolean;
+  public attributionControl?: boolean = false;
 
   @Input()
-  public zoomControl?: boolean;
+  public zoomControl?: boolean = false;
 
   /**
    * Interaction options
    */
   @Input()
-  closePopupOnClick?: boolean;
+  closePopupOnClick?: boolean = true;
 
   @Input()
-  zoomSnap?: number;
+  zoomSnap?: number = 1;
 
   @Input()
-  zoomDelta?: number;
+  zoomDelta?: number = 1;
 
   @Input()
-  trackResize?: boolean;
+  trackResize?: boolean = true;
 
   @Input()
-  boxZoom?: boolean;
+  boxZoom?: boolean = true;
 
   @Input()
-  doubleClickZoom?: Zoom;
+  doubleClickZoom?: Zoom = true;
 
   @Input()
-  dragging?: boolean;
+  dragging?: boolean = true;
 
 
   /**
    * Map state options
    */
   @Input()
-  crs?: CRS;
+  crs?: CRS = L.CRS.EPSG3857;
 
   @Input()
-  center?: LatLngExpression;
+  center: LatLngExpression;
 
   @Input()
-  zoom?: number;
+  zoom: number;
 
   @Input()
-  minZoom?: number;
+  minZoom: number;
 
   @Input()
-  maxZoom?: number;
+  maxZoom: number;
 
   @Input()
-  layers?: Array<Layer>;
+  layers?: Array<Layer> = [];
 
   @Input()
-  maxBounds?: LatLngBoundsExpression;
+  maxBounds?: LatLngBoundsExpression = null;
 
   @Input()
-  renderer?: Renderer;
+  renderer?: Renderer =  null;
 
   /**
    * Animation options
@@ -152,7 +161,7 @@ export class JGLeafletMapComponent implements OnChanges, OnInit, OnDestroy{
 
   @Input()
   touchZoom?: Zoom;
-  
+
   @Input()
   bounceAtZoomLimits?: boolean;
 
@@ -173,7 +182,20 @@ export class JGLeafletMapComponent implements OnChanges, OnInit, OnDestroy{
   }
 
   private _initMapInstance(el: HTMLElement) {
-    this._factory.createMap();
+    this._factory.createMap(el, <MapOptions>{
+      attributionControl: this.attributionControl,
+      bounceAtZoomLimits: this.bounceAtZoomLimits,
+      boxZoom: this.boxZoom,
+      center: this.center,
+      closePopupOnClick: this.closePopupOnClick,
+      crs: this.crs,
+      doubleClickZoom: this.doubleClickZoom,
+      dragging: this.dragging,
+      easeLinearity: this.easeLinearity,
+      fadeAnimation: this.fadeAnimation,
+      inertia: this.inertia,
+      inertiaDeceleration: this.inertiaDeceleration
+    });
   }
 
 }
