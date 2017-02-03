@@ -10,6 +10,7 @@ import {Component,
 import {LeafletFactoryService} from '../services/leaflet-factory.service';
 
 import {CRS,
+  MapOptions,
   Zoom,
   LatLngExpression,
   Layer,
