@@ -1,11 +1,9 @@
 ///<reference path="../../node_modules/@types/leaflet/index.d.ts"/>
 import {Component,
   ElementRef,
-  EventEmitter,
   OnChanges,
   OnDestroy,
   OnInit,
-  SimpleChange,
   Input} from '@angular/core';
 import {LeafletFactoryService} from '../services/leaflet-factory.service';
 
@@ -16,10 +14,18 @@ import {CRS,
   Layer,
   LatLngBoundsExpression,
   Renderer} from 'leaflet'
+import LayerOptions = L.LayerOptions;
 
 @Component({
   selector: 'jg-leaflet-map',
-  template: `<div class="leaflet-wrap"><ng-content></ng-content></div>`,
+  template: `<div class="leaflet-wrap">
+    <ng-content></ng-content>
+  </div>`,
+  styles: [`
+     .leaflet-wrap{
+        height: 100%;
+     }
+  `],
   providers: [
     LeafletFactoryService
   ]
@@ -42,129 +48,135 @@ export class JGLeafletMapComponent implements OnChanges, OnInit, OnDestroy{
    * Interaction options
    */
   @Input()
-  closePopupOnClick?: boolean = true;
+  public closePopupOnClick?: boolean = true;
 
   @Input()
-  zoomSnap?: number = 1;
+  public zoomSnap?: number = 1;
 
   @Input()
-  zoomDelta?: number = 1;
+  public zoomDelta?: number = 1;
 
   @Input()
-  trackResize?: boolean = true;
+  public trackResize?: boolean = true;
 
   @Input()
-  boxZoom?: boolean = true;
+  public boxZoom?: boolean = true;
 
   @Input()
-  doubleClickZoom?: Zoom = true;
+  public doubleClickZoom?: Zoom = true;
 
   @Input()
-  dragging?: boolean = true;
+  public dragging?: boolean = true;
 
 
   /**
    * Map state options
    */
   @Input()
-  crs?: CRS = L.CRS.EPSG3857;
+  public crs?: CRS = L.CRS.EPSG3857;
 
   @Input()
-  center: LatLngExpression;
+  public lat: number = 51.505;
 
   @Input()
-  zoom: number;
+  public lng: number = -0.09;
 
   @Input()
-  minZoom: number;
+  public center: LatLngExpression;
 
   @Input()
-  maxZoom: number;
+  public zoom: number = 13;
 
   @Input()
-  layers?: Array<Layer> = [];
+  public minZoom: number;
 
   @Input()
-  maxBounds?: LatLngBoundsExpression = null;
+  public maxZoom: number;
 
   @Input()
-  renderer?: Renderer =  null;
+  public layers?: Array<Layer> = [];
+
+  @Input()
+  public maxBounds?: LatLngBoundsExpression = null;
+
+  @Input()
+  public renderer?: Renderer = L.canvas();
 
   /**
    * Animation options
    */
   @Input()
-  fadeAnimation?: boolean;
+  public fadeAnimation?: boolean = true;
 
   @Input()
-  markerZoomAnimation?: boolean;
+  public markerZoomAnimation?: boolean = true;
 
   @Input()
-  transform3DLimit?: number;
+  public transform3DLimit?: number = 2^23;
 
   @Input()
-  zoomAnimation?: boolean;
+  public zoomAnimation?: boolean = true;
 
   @Input()
-  zoomAnimationThreshold?: number;
+  public zoomAnimationThreshold?: number = 4;
 
   /**
    * Panning inertia options
    */
   @Input()
-  inertia?: boolean;
+  public inertia?: boolean = null;
 
   @Input()
-  inertiaDeceleration?: number;
+  public inertiaDeceleration?: number = 3000;
 
   @Input()
-  inertiaMaxSpeed?: number;
+  public inertiaMaxSpeed?: number = Infinity;
 
   @Input()
-  easeLinearity?: number;
+  public easeLinearity?: number = 0.2;
 
   @Input()
-  worldCopyJump?: boolean;
+  public worldCopyJump?: boolean = false;
 
   @Input()
-  maxBoundsViscosity?: number;
+  public maxBoundsViscosity?: number = 0.0;
 
   /**
    * Keyboard navigation options
    */
   @Input()
-  keyboard?: boolean;
+  public keyboard?: boolean = true;
 
   @Input()
-  keyboardPanDelta?: number;
+  public keyboardPanDelta?: number = 80;
 
   /**
    * Mousewheel options
    */
 
   @Input()
-  scrollWheelZoom?: Zoom;
+  public scrollWheelZoom?: Zoom = true;
 
   @Input()
-  wheelDebounceTime?: number;
+  public wheelDebounceTime?: number = 40;
 
   @Input()
-  wheelPxPerZoomLevel?: number;
+  public wheelPxPerZoomLevel?: number = 60;
 
   /**
    * Touch interaction options
    */
   @Input()
-  tap?: boolean;
+  public tap?: boolean = true;
 
   @Input()
-  tapTolerance?: number;
+  public tapTolerance?: number = 15;
 
   @Input()
-  touchZoom?: Zoom;
+  public touchZoom?: Zoom = null;
 
   @Input()
-  bounceAtZoomLimits?: boolean;
+  public bounceAtZoomLimits?: boolean = true;
 
   constructor(private _elem: ElementRef, private _factory: LeafletFactoryService){
   }
@@ -187,7 +199,7 @@ export class JGLeafletMapComponent implements OnChanges, OnInit, OnDestroy{
       attributionControl: this.attributionControl,
       bounceAtZoomLimits: this.bounceAtZoomLimits,
       boxZoom: this.boxZoom,
-      center: this.center,
+      center: this.center || L.latLng(this.lat, this.lng),
       closePopupOnClick: this.closePopupOnClick,
       crs: this.crs,
       doubleClickZoom: this.doubleClickZoom,
@@ -195,7 +207,33 @@ export class JGLeafletMapComponent implements OnChanges, OnInit, OnDestroy{
       easeLinearity: this.easeLinearity,
       fadeAnimation: this.fadeAnimation,
       inertia: this.inertia,
-      inertiaDeceleration: this.inertiaDeceleration
+      inertiaDeceleration: this.inertiaDeceleration,
+      inertiaMaxSpeed: this.inertiaMaxSpeed,
+      keyboard: this.keyboard,
+      keyboardPanDelta: this.keyboardPanDelta,
+      layers: this.layers,
+      markerZoomAnimation: this.markerZoomAnimation,
+      maxBounds: this.maxBounds,
+      maxBoundsViscosity: this.maxBoundsViscosity,
+      maxZoom: this.maxZoom,
+      minZoom: this.minZoom,
+      renderer: this.renderer,
+      scrollWheelZoom: this.scrollWheelZoom,
+      tap: this.tap,
+      tapTolerance: this.tapTolerance,
+      touchZoom: this.touchZoom,
+      trackResize: this.trackResize,
+      transform3DLimit: this.transform3DLimit,
+      wheelDebounceTime: this.wheelDebounceTime,
+      wheelPxPerZoomLevel: this.wheelPxPerZoomLevel,
+      worldCopyJump: this.worldCopyJump,
+      zoom: this.zoom,
+      zoomAnimation: this.zoomAnimation,
+      zoomAnimationThreshold: this.zoomAnimationThreshold,
+      zoomControl: this.zoomControl,
+      zoomDelta: this.zoomDelta,
+      zoomSnap: this.zoomSnap,
+      preferCanvas: this.preferCanvas
     });
   }
 
