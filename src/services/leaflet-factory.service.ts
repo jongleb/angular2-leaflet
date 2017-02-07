@@ -5,9 +5,14 @@ import MapOptions = L.MapOptions;
 @Injectable()
 export class LeafletFactoryService {
 
+  private _map: leaflet.Map;
+
   createMap(el: HTMLElement, options?: MapOptions) {
-    console.log(el);
-    console.log(options);
-    leaflet.map(el, options);
+    this._map = leaflet.map(el, options);
+
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'OSM'
+    }).addTo(this._map)
+
   }
 }
